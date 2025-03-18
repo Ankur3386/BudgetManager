@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 const userSchema =mongoose.Schema({
 fullname:{
@@ -7,7 +7,7 @@ fullname:{
         type:String,
         required:true
     },
-    lasstname:{
+    lastname:{
         type:String
     }
 },
@@ -15,7 +15,7 @@ email:{
     type:String,
     required:true
 },
-passsword:{
+password:{
     type:String,
     required:true,
     select:false
@@ -36,8 +36,12 @@ orderHistory:[
 ],
 
 },{timestamps:true})
-userSchema.methods.hashPassword = async function(passsword){
- return await bcrypt.hash(passsword,10)
+userSchema.statics.hashPassword =async function(password){
+    if (!password) {
+        throw new Error("Password is required for hashing");
+    }
+
+    return await bcrypt.hash(password,10)
 }
 userSchema.methods.comparePassword =async function (passsword) {
    return  await bcrypt.compare(passsword,this.passsword)

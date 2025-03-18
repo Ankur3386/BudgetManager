@@ -7,17 +7,18 @@ const RegisterUser = async(req,res,next)=>{
     //tKE IMAGE FILE
     //create model and validate
     //return response
-const {fullname,email,password}=req.body
-if(!fullname&&email&&password)
-{
-return res.status(400).json({message:"credentials are required"})    
-}
+    //"fullname.firstname": firstName, "fullname.lastname": lastName, used as i am sending data through form-data
+    const { "fullname.firstname": firstName, "fullname.lastname": lastName, email, password } = req.body;
+    if (!firstName || !lastName || !email || !password) {
+        return res.status(400).json({ message: "All credentials are required" });
+    }
+  
 const existingUser= await User.findOne({email})
 if (existingUser){
     throw new Error("user already exist")
 }
 const hashedPassword = await User.hashPassword(password)
-const avatarLocalPath =req.files?.avatar[0].path
+const avatarLocalPath = req.files?.avatar?.[0]?.path || req.file?.path;
 if(!avatarLocalPath ){
     throw new Error("error while uploading avatar image")
 }
@@ -29,8 +30,8 @@ if(!avatarUploaded ){
 
 const user = await User.create({
     fullname:{
-        firstname:fullname.firstname,
-        lastname:fullname.lastname
+        firstname:firstName,
+        lastname:lastName
     },
     password:hashedPassword,
     email,
