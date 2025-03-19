@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-const userSchema =mongoose.Schema({
+const userSchema = new mongoose.Schema({
 fullname:{
     firstname:{
         type:String,
@@ -28,7 +28,12 @@ refreshToken :{
     type:String,
     select:false
 },
-orderHistory:[
+address:{
+    type:String,
+   
+},
+
+    orderHistory:[
     {
         type: mongoose.Types.ObjectId,
         ref:"Order"
